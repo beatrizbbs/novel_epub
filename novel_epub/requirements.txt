@@ -1,0 +1,3 @@
+beautifulsoup4>=4.9.3
+ebooklib>=0.17.0
+cloudscraper>=1.2.4
