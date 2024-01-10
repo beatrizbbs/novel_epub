@@ -1,6 +1,8 @@
 import argparse
 
 from .novel import *
+from .chapter import *
+from .epub import *
 
 def get_args():
     parser = argparse.ArgumentParser(description="Convert novel chapters to an EPUB file.")
@@ -19,10 +21,10 @@ def get_args():
 def main():
     args = get_args()
 
-    
-    novel = Novel(args.url, title=args.title)
+    novel = Novel(args.url, args.start_chapter, args.end_chapter, title=args.title, author=args.author)
     print(novel)
-
+    
+    NovelEpub(novel)
 
 if __name__ == '__main__':
     main()

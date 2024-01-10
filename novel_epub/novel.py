@@ -1,19 +1,20 @@
 from bs4 import BeautifulSoup
 import cloudscraper
 import os
-import re
-from ebooklib import epub
+import time
+
+from .chapter import *
 
 class Novel:
-    novel_epub = epub.EpubBook()
+    scraper = cloudscraper.create_scraper(browser={'browser': 'firefox','platform': \
+        'windows','mobile': False})
+    chapters = None
     
-    def __init__(self, url, title=None, author=None, cover=None):
-        self.scraper = cloudscraper.create_scraper(browser={'browser': 'firefox','platform': \
-            'windows','mobile': False})
-        self.html = self.scraper.get(url).content
-        self.soup = BeautifulSoup(self.html, "html5lib")
-        
+    def __init__(self, url, start_chapter, end_chapter, title=None, author=None):
+        self.soup = BeautifulSoup(self.scraper.get(url).content, "html5lib")
         self.url = url
+        self.start_chapter = start_chapter
+        self.end_chapter = end_chapter
         self.set_title(title)
         self.set_author(author)
         self.get_cover()
@@ -21,7 +22,6 @@ class Novel:
     def __str__(self) -> str:
         novel_print = f"Title: {self.title}\n"
         novel_print += f"Author: {self.author}\n"
-        novel_print += f"URL: {self.url}"
         return novel_print
             
     def set_title(self, title=None):
@@ -51,4 +51,11 @@ class Novel:
         if os.path.exists("cover.jpg"):
             os.remove("cover.jpg")
             print(f"Cover file has been successfully removed.")
+ 
+    def get_chapters(self):
+        self.chapters = []
+        for chapter_number in range(self.start_chapter, self.end_chapter + 1):
+            chapter = Chapter(self, chapter_number)
+            time.sleep(3)
+            self.chapters.append(chapter)
  
